@@ -1,3 +1,0 @@
-/home/tangxl/chat/testmuduo/build/CMakeFiles/rebuild_cache.dir
-/home/tangxl/chat/testmuduo/build/CMakeFiles/edit_cache.dir
-/home/tangxl/chat/testmuduo/build/CMakeFiles/server.dir
