@@ -3,12 +3,14 @@
 
 #include <string>
 #include <vector>
+#include "connectionpool.hpp"
 using namespace std;
 
 
 class OfflineMsgModel
 {
 public:
+    OfflineMsgModel();
     //存储用户的离线消息
     void insert(int userid, string msg);
 
@@ -17,6 +19,8 @@ public:
 
     //查询用户的离线消息
     vector<string> query(int userid);
+
+    shared_ptr<MySQL> _sp;
 };
 
 

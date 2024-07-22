@@ -2,12 +2,6 @@
 #include <muduo/base/Logging.h>
 using namespace muduo;
 
-// 数据库配置信息
-static string server = "127.0.0.1";
-static string user = "root";
-static string password = "123456";
-static string dbname = "chat";
-
 MySQL::MySQL()
 {
     _conn = mysql_init(nullptr);
@@ -21,10 +15,14 @@ MySQL::~MySQL()
 }
 
 // 连接数据库
-bool MySQL::connect()
+bool MySQL::connect(string ip, 
+        unsigned short port,
+        string user,
+        string password,
+        string dbname)
 {
-    MYSQL *p = mysql_real_connect(_conn, server.c_str(), user.c_str(),
-                                  password.c_str(), dbname.c_str(), 3306, nullptr, 0);
+    MYSQL *p = mysql_real_connect(_conn, ip.c_str(), user.c_str(),
+                                  password.c_str(), dbname.c_str(), port, nullptr, 0);
     if (p != nullptr)
     {
         // c和c++默认编码字符为ascII，如果不设置，从mysql上拉下来的中文显示会？乱码

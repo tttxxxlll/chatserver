@@ -2,6 +2,7 @@
 #define GROUPMODEL_H
 
 #include "group.hpp"
+#include "connectionpool.hpp"
 #include <string>
 #include <vector>
 using namespace std;
@@ -10,6 +11,7 @@ using namespace std;
 class GroupModel
 {
 public:
+    GroupModel();
     //创建群组
     bool createGroup(Group &group);
     //加入群组
@@ -18,6 +20,8 @@ public:
     vector<Group> queryGroups(int userid);
     //根据指定的groupid查询用户id列表， 除了userid自己，主要用于用户给群组其他成员群发消息
     vector<int> queryGroupUsers(int userid, int groupid);
+
+    shared_ptr<MySQL> _sp;
 };
 
 

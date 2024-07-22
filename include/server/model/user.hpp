@@ -2,6 +2,7 @@
 #define USER_H
 
 #include <string>
+#include "connectionpool.hpp"
 using namespace std;
 
 

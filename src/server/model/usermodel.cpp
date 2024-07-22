@@ -3,6 +3,11 @@
 #include <iostream>
 using namespace std;
 
+UserModel::UserModel() {
+    ConnectionPool *p = ConnectionPool::getConnectionpool();
+    _sp = p->getConnection();
+}
+
 bool UserModel::insert(User &user)
 {
 
@@ -11,15 +16,11 @@ bool UserModel::insert(User &user)
     sprintf(sql, "insert into User(name, password, state) values('%s', '%s', '%s')",
             user.getName().c_str(), user.getPwd().c_str(), user.getState().c_str()); // c_str()的作用是将string转成char*
 
-    MySQL mysql;
-    if (mysql.connect())
+    if (_sp->update(sql))
     {
-        if (mysql.update(sql))
-        {
-            // 获取插入成功的用户数据的主键id
-            user.setId(mysql_insert_id(mysql.getConnection()));
-            return true;
-        }
+        // 获取插入成功的用户数据的主键id
+        user.setId(mysql_insert_id(_sp->getConnection()));
+        return true;
     }
 
     return false;
@@ -32,23 +33,19 @@ User UserModel::query(int id)
     char sql[1024] = {0};
     sprintf(sql, "select * from User where id = %d", id);
 
-    MySQL mysql;
-    if (mysql.connect())
+    MYSQL_RES *res = _sp->query(sql);
+    if (res != nullptr)
     {
-        MYSQL_RES *res = mysql.query(sql);
-        if (res != nullptr)
+        MYSQL_ROW row = mysql_fetch_row(res); // 获取行数据
+        if (row != nullptr)
         {
-            MYSQL_ROW row = mysql_fetch_row(res); // 获取行数据
-            if (row != nullptr)
-            {
-                User user;
-                user.setId(atoi(row[0]));
-                user.setName(row[1]);
-                user.setPwd(row[2]);
-                user.setState(row[3]);
-                mysql_free_result(res); // res在堆区，要手动释放
-                return user;
-            }
+            User user;
+            user.setId(atoi(row[0]));
+            user.setName(row[1]);
+            user.setPwd(row[2]);
+            user.setState(row[3]);
+            mysql_free_result(res); // res在堆区，要手动释放
+            return user;
         }
     }
 
@@ -62,13 +59,9 @@ bool UserModel::updatestate(User user)
     char sql[1024] = {0};
     sprintf(sql, "update User set state = '%s' where id = %d", user.getState().c_str(), user.getId()); // c_str()的作用是将string转成char*
 
-    MySQL mysql;
-    if (mysql.connect())
+    if (_sp->update(sql))
     {
-        if (mysql.update(sql))
-        {
-            return true;
-        }
+        return true;
     }
 
     return false;
@@ -77,10 +70,6 @@ bool UserModel::updatestate(User user)
 //重置用户的状态信息
 void UserModel::resetState() {
     char sql[1024] = "update User set state = 'offline' where state = 'online'";
-    MySQL mysql;
-    if (mysql.connect())
-    {
-        mysql.update(sql);
-    }
+    _sp->update(sql);
 
 }

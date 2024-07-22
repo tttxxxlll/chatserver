@@ -31,6 +31,7 @@ private:
     string desc;
     vector<GroupUser> users;
 
+
 };
 
 
